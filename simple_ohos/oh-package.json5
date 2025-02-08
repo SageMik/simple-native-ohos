@@ -1,0 +1,15 @@
+{
+  "name": "simple-ohos",
+  "version": "1.0.0",
+  "description": "基于 Simple (支持中文和拼音的 SQLite fts5 全文搜索扩展) 的 HarmonyOS 库，用于关系型数据库的中文和拼音全文搜索。",
+  "main": "Index.ets",
+  "author": "SageMik",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/SageMik",
+  "keywords": ["sqlite3", "分词", "中文", "拼音", "fts5"],
+  "repository": "https://github.com/SageMik/simple-ohos/tree/main/simple_ohos",
+  "dependencies": {
+    "simple-native-ohos": "file:../simple_native_ohos",
+//    "simple-native-ohos": "^1.0.3" // 远程
+  }
+}

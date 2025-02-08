@@ -28,6 +28,22 @@
     {
       "name": "simple_native_ohos",
       "srcPath": "./simple_native_ohos"
+    },
+    {
+      "name": "simple_ohos",
+      "srcPath": "./simple_ohos"
+    },
+    {
+      "name": "example",
+      "srcPath": "./example",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
     }
   ]
 }
