@@ -2,7 +2,6 @@
   "module": {
     "name": "example",
     "type": "entry",
-    "description": "$string:module_desc",
     "mainElement": "ExampleAbility",
     "deviceTypes": [
       "phone",
@@ -15,8 +14,7 @@
     "abilities": [
       {
         "name": "ExampleAbility",
-        "srcEntry": "./ets/exampleability/ExampleAbility.ets",
-        "description": "$string:ExampleAbility_desc",
+        "srcEntry": "./ets/ExampleAbility.ets",
         "icon": "$media:layered_image",
         "label": "$string:ExampleAbility_label",
         "startWindowIcon": "$media:startIcon",
@@ -34,19 +32,5 @@
         ]
       }
     ],
-    "extensionAbilities": [
-      {
-        "name": "ExampleBackupAbility",
-        "srcEntry": "./ets/examplebackupability/ExampleBackupAbility.ets",
-        "type": "backup",
-        "exported": false,
-        "metadata": [
-          {
-            "name": "ohos.extension.backup",
-            "resource": "$profile:backup_config"
-          }
-        ],
-      }
-    ]
   }
 }
