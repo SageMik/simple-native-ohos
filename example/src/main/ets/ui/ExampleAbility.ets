@@ -1,7 +1,7 @@
 import { UIAbility } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
-import { DbManager } from './data/DbManager';
+import { DbManager } from '../data/DbManager';
 
 const DOMAIN = 0x0000;
 
@@ -22,7 +22,7 @@ export default class ExampleAbility extends UIAbility {
 
   async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
     await dbManger.init(this.context)
-    windowStage.loadContent('HomePage', new LocalStorage(), (err) => {
+    windowStage.loadContent('ui/HomePage', new LocalStorage(), (err) => {
       if (err.code) {
         hilog.error(DOMAIN, 'Home', `打开失败：${JSON.stringify(err)}`)
         return

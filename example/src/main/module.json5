@@ -14,9 +14,9 @@
     "abilities": [
       {
         "name": "ExampleAbility",
-        "srcEntry": "./ets/ExampleAbility.ets",
+        "srcEntry": "./ets/ui/ExampleAbility.ets",
         "icon": "$media:layered_image",
-        "label": "$string:ExampleAbility_label",
+        "label": "$string:HomePageAppTitle",
         "startWindowIcon": "$media:startIcon",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,

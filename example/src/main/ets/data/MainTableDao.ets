@@ -1,4 +1,5 @@
 import { relationalStore } from "@kit.ArkData"
+import { dbManger } from "../ui/ExampleAbility"
 import randomWords from "../utils/RandomWords"
 import ZeroWidth from "../utils/ZeroWidth"
 import { MainTableRow } from "./MainTableRow"
@@ -27,7 +28,7 @@ export class MainTableDao {
    */
   private _initFts5() {
     // 主表
-    this.db.executeSql(`
+    this.db.executeSync(`
       CREATE TABLE ${mainTable} (
         ${id} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${title} TEXT,
@@ -37,7 +38,7 @@ export class MainTableDao {
     `)
 
     /// FTS5虚表
-    this.db.executeSql(`
+    this.db.executeSync(`
       CREATE VIRTUAL TABLE ${fts5Table} USING fts5(
         ${title}, ${content}, ${insertDate} UNINDEXED,
         tokenize = '${tokenizer}',
@@ -55,17 +56,17 @@ export class MainTableDao {
       INSERT INTO ${fts5Table}(${fts5Table}, rowid, ${title}, ${content})
         VALUES ('delete', old.${id}, old.${title}, old.${content});
     `;
-    this.db.executeSql(`
+    this.db.executeSync(`
       CREATE TRIGGER ${mainTable}_insert AFTER INSERT ON ${mainTable} BEGIN
         ${newInsert}
       END;
     `);
-    this.db.executeSql(`
+    this.db.executeSync(`
       CREATE TRIGGER ${mainTable}_delete AFTER DELETE ON ${mainTable} BEGIN
         ${deleteInsert}
       END;
     `);
-    this.db.executeSql(`
+    this.db.executeSync(`
       CREATE TRIGGER ${mainTable}_update AFTER UPDATE ON ${mainTable} BEGIN
         ${deleteInsert}
         ${newInsert}
@@ -108,15 +109,15 @@ export class MainTableDao {
    */
   insertRandomData(length: number) {
     for (let i = 0; i < length; i++) {
-      const row = this._buildData()
-      this.db.executeSql(
+      const newRow = this._buildData()
+      this.db.executeSync(
         `INSERT INTO ${mainTable} VALUES(?, ?, ?, ?);`,
-        [null, row.title, row.content, MainTableRow.dateToDB(row.insertDate)]
+        [null, newRow.title, newRow.content, newRow.insertDateDB]
       )
     }
   }
 
-  private readonly _selectAllPredicates = new relationalStore.RdbPredicates("selectAll")
+  private readonly _selectAllPredicates = new relationalStore.RdbPredicates(mainTable)
 
   /**
    * @returns 主表的所有数据
@@ -153,5 +154,19 @@ export class MainTableDao {
       WHERE ${fts5Table} MATCH ${tokenizer}_query(?);
     `, [value])
     return this._toMainTableRows(resultSet)
+  }
+
+  /**
+   * 修改所有数据，测试触发器
+   */
+  updateAll() {
+    const mainTableRowList = this.selectAll()
+    for (let i = 0; i < mainTableRowList.length; i++) {
+      const newRow = this._buildData()
+      this.db.executeSync(
+        `UPDATE ${mainTable} SET ${title} = ?, ${content} = ?, ${insertDate} = ? WHERE ${id} = ?;`,
+        [newRow.title, newRow.content, newRow.insertDateDB, mainTableRowList[i].id]
+      )
+    }
   }
 }

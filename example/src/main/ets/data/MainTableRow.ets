@@ -1,6 +1,3 @@
-import { relationalStore } from '@kit.ArkData';
-import randomWords from '../utils/RandomWords';
-import ZeroWidth from '../utils/ZeroWidth';
 
 export interface IMainTableRow {
   readonly id: number
@@ -15,6 +12,10 @@ export class MainTableRow implements IMainTableRow {
   readonly content: string
   readonly insertDate: Date
 
+  get insertDateDB(): number {
+    return this.insertDate.getTime()
+  }
+
   constructor(i: IMainTableRow) {
     this.id = i.id
     this.title = i.title
@@ -24,10 +25,6 @@ export class MainTableRow implements IMainTableRow {
 
   static dateFromDB(insertDateFromDB: number): Date {
     return new Date(insertDateFromDB)
-  }
-
-  static dateToDB(date: Date): number {
-    return date.getUTCMilliseconds()
   }
 
   // copy(i: IMainTableRow) {

@@ -18,6 +18,7 @@ export class DbManager {
     if (this._dao) {
       return
     }
+    await relationalStore.deleteRdbStore(context, "example.db")
     const LIB_SIMPLE = await Simple.getNativeLibraryPath(context)
     const STORE_CONFIG: relationalStore.StoreConfig = {
       name: "example.db",

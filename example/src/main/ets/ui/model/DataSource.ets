@@ -1,75 +1,17 @@
-import { HomeViewModel } from './HomeViewModel'
+export default class DataSource<T> implements IDataSource {
+  protected listeners: DataChangeListener[] = [];
+  protected getDataArray: () => T[] = () => [];
 
-const padding = 16
-
-@Entry
-@Component
-struct HomePage {
-  viewModel: HomeViewModel = new HomeViewModel()
-
-  @Builder
-  NavigationTitle() {
-    Column() {
-      Text($r("app.string.ExampleAbility_label"))
-        .fontColor(Color.White)
-        .fontWeight(700)
-        .fontSize(24)
-        .width("100%")
-        .padding(padding)
-    }
-    .justifyContent(FlexAlign.Center)
-    .height("100%")
-    .width("100%")
+  constructor(getDataArray: () => T[]) {
+    this.getDataArray = getDataArray
   }
-
-  @Builder
-  Padding() {
-    Blank().height(padding)
-  }
-
-  build() {
-    Navigation() {
-      Column() {
-        Search().margin(padding)
-        List() {
-          LazyForEach(new MyDataSource(), (item: string) => {
-            ListItem() {
-              Row() {
-                Text(item).fontSize(30)
-                  .onAppear(() => {
-                    console.info("appear:" + item)
-                  })
-              }.padding({ left: padding, right: padding })
-            }
-          })
-        }
-        .cachedCount(5)
-        .width("100%")
-        .height(0)
-        .layoutWeight(1)
-      }
-    }
-    .title(this.NavigationTitle, {
-      backgroundColor: 0x6750A4
-    })
-    .titleMode(NavigationTitleMode.Mini)
-    .hideBackButton(true)
-    .height('100%')
-    .width('100%')
-  }
-}
-
-// BasicDataSource实现了IDataSource接口，用于管理listener监听，以及通知LazyForEach数据更新
-class BasicDataSource implements IDataSource {
-  private listeners: DataChangeListener[] = [];
-  private originDataArray: string[] = [];
 
   public totalCount(): number {
-    return 0;
+    return this.getDataArray().length;
   }
 
-  public getData(index: number): string {
-    return this.originDataArray[index];
+  public getData(index: number): T {
+    return this.getDataArray()[index];
   }
 
   // 该方法为框架侧调用，为LazyForEach组件向其数据源处添加listener监听
@@ -133,30 +75,5 @@ class BasicDataSource implements IDataSource {
     this.listeners.forEach(listener => {
       listener.onDatasetChange(operations);
     })
-  }
-}
-
-
-class MyDataSource extends BasicDataSource {
-  private dataArray: string[] = []
-
-  constructor() {
-    super()
-    for (let i = 0; i <= 30; i++) {
-      this.pushData('Hello' + i);
-    }
-  }
-
-  public totalCount(): number {
-    return this.dataArray.length;
-  }
-
-  public getData(index: number): string {
-    return this.dataArray[index];
-  }
-
-  public pushData(data: string): void {
-    this.dataArray.push(data);
-    this.notifyDataAdd(this.dataArray.length - 1);
   }
 }
