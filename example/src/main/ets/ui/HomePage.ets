@@ -1,5 +1,8 @@
+import { ColorUtils, ExtendedText } from '@candies/extended_text'
 import { MainTableRow } from '../data/MainTableRow'
+import { ZeroWidthText, CustomTextSpanBuilder } from '../utils/ZeroWidth'
 import HomeViewModel from './viewmodel/HomeViewModel'
+import { text } from '@kit.ArkGraphics2D'
 
 class P {
   static readonly MIDDLE = 16
@@ -17,22 +20,6 @@ struct HomePage {
   }
 
   // readonly dataSource = new DataSource(this.viewModel.results)
-
-
-  @Builder
-  NavigationTitle() {
-    Column() {
-      Text($r("app.string.HomePageAppTitle"))
-        .fontColor(Color.White)
-        .fontWeight(FontWeight.Bolder)
-        .fontSize(24)
-        .width("100%")
-        .padding(P.MIDDLE)
-    }
-    .justifyContent(FlexAlign.Center)
-    .height("100%")
-    .width("100%")
-  }
 
   aboutToAppear(): void {
     this.viewModel.insertRandomData()
@@ -66,19 +53,13 @@ struct HomePage {
                 Column({ space: P.EXTRA_SMALL }) {
                   Scroll() {
                     Column({ space: P.EXTRA_SMALL }) {
-                      Text(item.title)
-                        .fontSize(20)
-                        .fontWeight(FontWeight.Medium)
-                        .maxLines(1)
-                      Text(item.content)
-                        .fontSize(12)
-                        .maxLines(1)
+                      HighlightText({ text: item.title, fontSize: 20 })
+                      HighlightText({ text: item.content, fontSize: 12 })
                     }
                     .alignItems(HorizontalAlign.Start)
                   }
                   .scrollable(ScrollDirection.Horizontal)
                   .scrollBar(BarState.Off)
-
                   Text(`${item.insertDate.toLocaleDateString()}  ${item.insertDate.toLocaleTimeString()}`)
                     .fontSize(10)
                     .width('100%')
@@ -99,7 +80,7 @@ struct HomePage {
         .layoutWeight(1)
       }
     }
-    .title(this.NavigationTitle, {
+    .title(NavigationTitle, {
       backgroundColor: 0x6750A4
     })
     .titleMode(NavigationTitleMode.Mini)
@@ -107,4 +88,43 @@ struct HomePage {
     .height('100%')
     .width('100%')
   }
+}
+
+@ComponentV2
+struct HighlightText {
+  @Param @Require readonly text: string
+  @Param @Require readonly fontSize: number
+
+  build() {
+    ExtendedText({
+      text: this.text,
+      specialTextSpanBuilder: new CustomTextSpanBuilder([
+        new ZeroWidthText({ color: ColorUtils.numberTo2DColor(0xFF0000) })]),
+      paragraphStyle: {
+        textStyle: {
+          color: ColorUtils.resourceColorTo2DColor($r('sys.color.font'), getContext(this)),
+          fontSize: vp2px(this.fontSize),
+          fontWeight: text.FontWeight.W500
+        },
+        maxLines: 1
+      },
+      
+    })
+  }
+}
+
+
+@Builder
+function NavigationTitle() {
+  Column() {
+    Text($r("app.string.HomePageAppTitle"))
+      .fontColor(Color.White)
+      .fontWeight(FontWeight.Bolder)
+      .fontSize(24)
+      .width("100%")
+      .padding(P.MIDDLE)
+  }
+  .justifyContent(FlexAlign.Center)
+  .height("100%")
+  .width("100%")
 }

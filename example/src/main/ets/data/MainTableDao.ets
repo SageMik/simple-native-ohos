@@ -1,6 +1,6 @@
 import { relationalStore } from '@kit.ArkData'
 import randomWords from '../utils/RandomWords'
-import ZeroWidth from '../utils/ZeroWidth'
+import { ZeroWidth } from '../utils/ZeroWidth'
 import { MainTableRow } from './MainTableRow'
 
 // const tokenizer = "simple 0";  // 关闭拼音搜索
