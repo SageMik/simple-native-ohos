@@ -1,24 +1,30 @@
 import { MainTableRow } from '../data/MainTableRow'
-import DataSource from './model/DataSource'
 import HomeViewModel from './viewmodel/HomeViewModel'
 
 class P {
   static readonly MIDDLE = 16
   static readonly SMALL = 8
+  static readonly EXTRA_SMALL = 2
 }
 
 @Entry
 @Component
 struct HomePage {
   readonly viewModel = new HomeViewModel()
-  readonly dataSource = new DataSource(() => this.viewModel.results)
+
+  get uiState() {
+    return this.viewModel.uiState
+  }
+
+  // readonly dataSource = new DataSource(this.viewModel.results)
+
 
   @Builder
   NavigationTitle() {
     Column() {
       Text($r("app.string.HomePageAppTitle"))
         .fontColor(Color.White)
-        .fontWeight(700)
+        .fontWeight(FontWeight.Bolder)
         .fontSize(24)
         .width("100%")
         .padding(P.MIDDLE)
@@ -35,31 +41,55 @@ struct HomePage {
   build() {
     Navigation() {
       Column() {
-        Search().margin(P.MIDDLE)
-        Row() {
-          Button() {
-            Text() {
-              SymbolSpan($r('sys.symbol.rectangle_rotate'))
-                .fontSize(48)
-            }
-          }.onClick((_) => {
-            this.viewModel.updateAll()
-            this.dataSource.notifyDataReload()
-          })
-        }
+        Search()
+          .borderRadius(P.SMALL)
+          .margin(P.MIDDLE)
+          .onChange((value, _) => this.viewModel.search(value))
+        // Row() {
+        //   Button() {
+        //     Text() {
+        //       SymbolSpan($r('sys.symbol.rectangle_rotate'))
+        //         .fontSize(48)
+        //     }
+        //   }.onClick(async (_) => {
+        //     this.viewModel.updateAll()
+        //   })
+        // }
         List() {
-          LazyForEach(this.dataSource, (item: MainTableRow) => {
+          ForEach(this.viewModel.results, (item: MainTableRow) => {
             ListItem() {
-              Row() {
+              Row({ space: P.SMALL }) {
                 Text(item.id.toString().padStart(this.viewModel.selectCount().toString().length, "0"))
-                  .fontSize(36)
+                  .fontSize(48)
+                  .fontWeight(600)
                   .fontFeature('"ss01" on') // 等宽数字
-                Column() {
-                  Text(item.content)
-                    .fontSize(20)
-                    .maxLines(1)
-                }.padding({ left: P.SMALL })
-              }.padding({ left: P.MIDDLE, right: P.MIDDLE })
+                Column({ space: P.EXTRA_SMALL }) {
+                  Scroll() {
+                    Column({ space: P.EXTRA_SMALL }) {
+                      Text(item.title)
+                        .fontSize(20)
+                        .fontWeight(FontWeight.Medium)
+                        .maxLines(1)
+                      Text(item.content)
+                        .fontSize(12)
+                        .maxLines(1)
+                    }
+                    .alignItems(HorizontalAlign.Start)
+                  }
+                  .scrollable(ScrollDirection.Horizontal)
+                  .scrollBar(BarState.Off)
+
+                  Text(`${item.insertDate.toLocaleDateString()}  ${item.insertDate.toLocaleTimeString()}`)
+                    .fontSize(10)
+                    .width('100%')
+                    .textAlign(TextAlign.End)
+                    .fontColor(Color.Grey)
+                }
+                .alignItems(HorizontalAlign.Start)
+                .width(0)
+                .layoutWeight(1)
+              }
+              .padding({ left: P.MIDDLE, right: P.MIDDLE })
             }
           })
         }

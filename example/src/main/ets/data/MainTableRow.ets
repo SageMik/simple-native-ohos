@@ -26,13 +26,4 @@ export class MainTableRow implements IMainTableRow {
   static dateFromDB(insertDateFromDB: number): Date {
     return new Date(insertDateFromDB)
   }
-
-  // copy(i: IMainTableRow) {
-  //   return new MainTableRow(
-  //     i.id ?? this.id,
-  //     i.title ?? this.title,
-  //     i.content ?? this.content,
-  //     i.insertDate ?? this.insertDate
-  //   )
-  // }
 }

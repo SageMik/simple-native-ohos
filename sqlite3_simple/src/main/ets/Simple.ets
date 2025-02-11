@@ -23,7 +23,7 @@ export class Simple {
 
   /**
    * @param context `Application` 或 `Ability` 的上下文。
-   * @returns 获取本库内置的结巴分词字典文件的存放位置。若要启用结巴分词，请执行 `SELECT jieba_dict('结巴分词字典文件的存放位置') 语句。
+   * @returns 获取本库内置的结巴分词字典文件的存放位置。若要启用结巴分词，请执行 `SELECT jieba_dict('${Simple.getJiebaDictPath(context)}')` SQL 语句。
    */
   static getJiebaDictPath(context: Context): string {
     return `${context.resourceDir}/cpp_jieba_dict`

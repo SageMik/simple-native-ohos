@@ -6,7 +6,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "simple-ohos": "file:../simple_ohos"
+    "sqlite3_simple": "file:../sqlite3_simple"
   }
 }
 

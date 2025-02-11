@@ -1,9 +1,10 @@
-import { MainTableRow } from "../../data/MainTableRow";
-import { dbManger } from "../ExampleAbility";
-import { Type } from "@ohos.arkui.StateManagement";
+import { MainTableRow } from '../../data/MainTableRow';
+import { dbManger } from '../ExampleAbility';
+import HomeUiState, { Tokenizer } from './HomeUiState';
 
 @ObservedV2
 export default class HomeViewModel {
+  readonly uiState = new HomeUiState()
   @Trace results: Array<MainTableRow> = []
 
   selectAll() {
@@ -22,5 +23,13 @@ export default class HomeViewModel {
   updateAll() {
     dbManger.dao.updateAll()
     this.selectAll()
+  }
+
+  search(value: string) {
+    if (value.trim().length === 0) {
+      this.selectAll()
+      return
+    }
+    this.results = dbManger.dao.search(value, Tokenizer[this.uiState.tokenizer])
   }
 }

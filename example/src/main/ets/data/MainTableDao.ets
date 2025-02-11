@@ -1,8 +1,7 @@
-import { relationalStore } from "@kit.ArkData"
-import { dbManger } from "../ui/ExampleAbility"
-import randomWords from "../utils/RandomWords"
-import ZeroWidth from "../utils/ZeroWidth"
-import { MainTableRow } from "./MainTableRow"
+import { relationalStore } from '@kit.ArkData'
+import randomWords from '../utils/RandomWords'
+import ZeroWidth from '../utils/ZeroWidth'
+import { MainTableRow } from './MainTableRow'
 
 // const tokenizer = "simple 0";  // 关闭拼音搜索
 const tokenizer = "simple"
