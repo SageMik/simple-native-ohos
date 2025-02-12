@@ -28,7 +28,7 @@ export class ZeroWidthText extends RegExpSpecialText {
     textStyle?: text.TextStyle
   ): InlineSpan {
     return new TextSpan({
-      text: match[0],
+      text: match[1],
       style: mergeNonNull(textStyle, this.textStyle),
       actualText: match[0],
       start: start,

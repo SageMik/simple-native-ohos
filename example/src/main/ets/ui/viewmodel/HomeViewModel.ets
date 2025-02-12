@@ -4,15 +4,11 @@ import HomeUiState, { Tokenizer } from './HomeUiState';
 
 @ObservedV2
 export default class HomeViewModel {
-  readonly uiState = new HomeUiState()
+  readonly uiState: HomeUiState = new HomeUiState()
   @Trace results: Array<MainTableRow> = []
 
   selectAll() {
     this.results = dbManger.dao.selectAll()
-  }
-
-  selectCount(): number {
-    return dbManger.dao.selectCount()
   }
 
   insertRandomData() {
@@ -25,11 +21,11 @@ export default class HomeViewModel {
     this.selectAll()
   }
 
-  search(value: string) {
-    if (value.trim().length === 0) {
+  search() {
+    if (this.uiState.isSearchValueEmpty()) {
       this.selectAll()
       return
     }
-    this.results = dbManger.dao.search(value, Tokenizer[this.uiState.tokenizer])
+    this.results = dbManger.dao.search(this.uiState.searchValue, Tokenizer[this.uiState.tokenizer])
   }
 }
