@@ -6,7 +6,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "sqlite3_simple": "file:../sqlite3_simple"
+    "sqlite3-simple": "file:../sqlite3_simple"
   }
 }
 
