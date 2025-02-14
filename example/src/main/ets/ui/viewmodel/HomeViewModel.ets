@@ -1,6 +1,6 @@
 import { MainTableRow } from '../../data/MainTableRow';
 import { dbManger } from '../ExampleAbility';
-import HomeUiState, { Tokenizer } from './HomeUiState';
+import HomeUiState, { Highlight, Tokenizer } from './HomeUiState';
 
 @ObservedV2
 export default class HomeViewModel {
@@ -26,6 +26,9 @@ export default class HomeViewModel {
       this.selectAll()
       return
     }
-    this.results = dbManger.dao.search(this.uiState.searchValue, Tokenizer[this.uiState.tokenizer])
+    this.results = dbManger.dao.search(
+      this.uiState.searchValue,
+      Tokenizer[this.uiState.tokenizer].toLocaleLowerCase()
+    )
   }
 }

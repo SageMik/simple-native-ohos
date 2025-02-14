@@ -9,6 +9,7 @@ import { MainTableRow } from '../data/MainTableRow'
 import { CustomTextSpanBuilder, ZeroWidthText } from '../utils/ZeroWidth'
 import HomeViewModel from './viewmodel/HomeViewModel'
 import { text } from '@kit.ArkGraphics2D'
+import { Tokenizer } from './viewmodel/HomeUiState'
 
 class P {
   static readonly MIDDLE = 16
@@ -19,6 +20,21 @@ class P {
 @Entry
 @Component
 struct HomePage {
+  @Builder
+  NavigationTitle() {
+    Column() {
+      Text($r("app.string.HomePageAppTitle"))
+        .fontColor(Color.White)
+        .fontWeight(FontWeight.Bolder)
+        .fontSize(24)
+        .width("100%")
+        .padding(P.MIDDLE)
+    }
+    .justifyContent(FlexAlign.Center)
+    .height("100%")
+    .width("100%")
+  }
+
   private readonly _viewModel = new HomeViewModel()
   private readonly _highlightTextBuilder = new CustomTextSpanBuilder([
     new ZeroWidthText({
@@ -36,35 +52,67 @@ struct HomePage {
 
   // readonly dataSource = new DataSource(this.viewModel.results)
 
+  private readonly _tokenizer2string = new Map([
+    [Tokenizer.JIEBA, $r("app.string.HomePageTokenizerJieba")],
+    [Tokenizer.SIMPLE, $r("app.string.HomePageTokenizerSimple")]
+  ])
+
   aboutToAppear(): void {
     this.viewModel().insertRandomData()
   }
 
   build() {
     Navigation() {
-      Column() {
+      Column({ space: P.MIDDLE }) {
         Search()
           .borderRadius(P.SMALL)
-          .margin(P.MIDDLE)
+          .margin({
+            left: P.MIDDLE,
+            right: P.MIDDLE,
+            top: P.MIDDLE,
+            bottom: 0
+          })
           .onChange((value, _) => {
             this.uiState().searchValue = value
             this.viewModel().search()
           })
-        // Row() {
-        //   Button() {
-        //     Text() {
-        //       SymbolSpan($r('sys.symbol.rectangle_rotate'))
-        //         .fontSize(48)
-        //     }
-        //   }.onClick(async (_) => {
-        //     this.viewModel.updateAll()
-        //   })
-        // }
+
+        Row({ space: P.MIDDLE }) {
+          SelectInMap({
+            label: $r("app.string.HomePageTokenizer"),
+            t2string: this._tokenizer2string as Map<ESObject, ResourceStr>,
+            getValue: () => this.uiState().tokenizer,
+            setValue: (index) => this.uiState().tokenizer = index
+          })
+
+          Blank().layoutWeight(1)
+
+          Button() {
+            Text() {
+              SymbolSpan($r('sys.symbol.arrow_clockwise'))
+                .fontSize(16)
+            }
+            .padding(P.EXTRA_SMALL * 2)
+          }
+          .backgroundColor(Color.Transparent)
+          .onClick(async (_) => {
+            this.viewModel().updateAll()
+          })
+        }
+        .padding({ left: P.MIDDLE, right: P.MIDDLE })
+        .width('100%')
+        .justifyContent(FlexAlign.SpaceBetween)
+
         List() {
           ForEach(this.viewModel().results, (item: MainTableRow) => {
             ListItem() {
               Row({ space: P.SMALL }) {
-                Text(item.id.toString().padStart(this.viewModel().results.length.toString().length, "0"))
+                Text(item.id.toString()
+                  .padStart(this.viewModel()
+                    .results
+                    .length
+                    .toString()
+                    .length, "0"))
                   .fontSize(48)
                   .fontWeight(600)
                   .fontFeature('"ss01" on') // 等宽数字
@@ -87,11 +135,11 @@ struct HomePage {
                   }
                   .alignItems(HorizontalAlign.Start)
 
-                  // Text(`${item.insertDate.toLocaleDateString()}  ${item.insertDate.toLocaleTimeString()}`)
-                  //   .fontSize(10)
-                  //   .width('100%')
-                  //   .textAlign(TextAlign.End)
-                  //   .fontColor(Color.Grey)
+                  Text(`${item.insertDate.toLocaleDateString()}  ${item.insertDate.toLocaleTimeString()}`)
+                    .fontSize(10)
+                    .width('100%')
+                    .textAlign(TextAlign.End)
+                    .fontColor(Color.Grey)
                 }
                 .alignItems(HorizontalAlign.Start)
                 .layoutWeight(1)
@@ -106,31 +154,20 @@ struct HomePage {
         .layoutWeight(1)
       }
     }
-    .title(NavigationTitle, {
-      backgroundColor: 0x6750A4
-    })
+    .title
+    (this
+      .NavigationTitle
+      , {
+        backgroundColor: 0x6750A4
+      }
+
+    )
     .titleMode(NavigationTitleMode.Mini)
     .hideBackButton(true)
     .height('100%')
     .width('100%')
   }
 }
-
-@Builder
-function NavigationTitle() {
-  Column() {
-    Text($r("app.string.HomePageAppTitle"))
-      .fontColor(Color.White)
-      .fontWeight(FontWeight.Bolder)
-      .fontSize(24)
-      .width("100%")
-      .padding(P.MIDDLE)
-  }
-  .justifyContent(FlexAlign.Center)
-  .height("100%")
-  .width("100%")
-}
-
 
 @ComponentV2
 struct HighlightText {
@@ -161,5 +198,31 @@ struct HighlightText {
 
 @Builder
 function buildEllipsisText() {
-  Text("!") // 省略号
+  Text("\u2026") // 省略号
+}
+
+
+@ComponentV2
+struct SelectInMap {
+  @Param @Require readonly label: ResourceStr
+  @Param @Require readonly t2string: Map<ESObject, ResourceStr>
+  @Param @Require readonly getValue: () => ESObject
+  @Param @Require readonly setValue: (index: number, value: string) => void
+
+  build() {
+    Row() {
+      Text(this.label)
+      Select(
+        Array.from(this.t2string.values())
+          .map<SelectOption>((value, _index) => {
+            return { value: value }
+          })
+      )
+        .value(this.t2string.get(this.getValue()))
+        .selected(this.getValue())
+        .onSelect(this.setValue)
+        .controlSize(ControlSize.SMALL)
+        .borderRadius(P.SMALL)
+    }
+  }
 }

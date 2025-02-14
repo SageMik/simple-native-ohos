@@ -3,6 +3,18 @@
     {
       "name": "HomePageAppTitle",
       "value": "Simple 分词器 示例"
+    },
+    {
+      "name": "HomePageTokenizer",
+      "value": "分词器："
+    },
+    {
+      "name": "HomePageTokenizerJieba",
+      "value": "结巴"
+    },
+    {
+      "name": "HomePageTokenizerSimple",
+      "value": "Simple"
     }
   ]
 }
