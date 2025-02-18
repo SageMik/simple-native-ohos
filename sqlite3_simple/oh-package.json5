@@ -1,7 +1,7 @@
 {
   "name": "sqlite3-simple",
   "version": "1.0.0",
-  "description": "基于 Simple (支持中文和拼音的 SQLite fts5 全文搜索扩展) 的 HarmonyOS 库，用于关系型数据库的中文和拼音全文搜索。",
+  "description": "基于 Simple (支持中文和拼音的 SQLite fts5 全文搜索扩展) 的 HarmonyOS NEXT 库，用于 @ohos.data.relationalStore (关系型数据库) 的中文和拼音全文搜索。",
   "main": "Index.ets",
   "author": "SageMik",
   "license": "Apache-2.0",

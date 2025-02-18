@@ -1,8 +1,8 @@
 # sqlite3-simple
 
-[![sqlite3-simple](https://img.shields.io/badge/v1.0.0-007ec6?label=sqlite3-simple&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple)
+[![OpenHarmony 三方库中心仓](https://img.shields.io/badge/v1.0.0-007ec6?label=OpenHarmony%20%E4%B8%89%E6%96%B9%E5%BA%93%E4%B8%AD%E5%BF%83%E4%BB%93&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple)
 
-基于 [Simple](https://github.com/wangfenjin/simple) (支持中文和拼音的 SQLite fts5 全文搜索扩展) 和 [@ohos.data.relationalStore (关系型数据库)](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-data-relationalstore-V5?catalogVersion=V5) 的 HarmonyOS NEXT 库，用于 SQLite 中文和拼音全文搜索。
+基于 [Simple](https://github.com/wangfenjin/simple) (支持中文和拼音的 SQLite fts5 全文搜索扩展) 的 HarmonyOS NEXT 库，用于 [@ohos.data.relationalStore (关系型数据库)](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-data-relationalstore-V5?catalogVersion=V5) 的中文和拼音全文搜索。
 
 - [前置准备](#前置准备)
 - [快速开始](#快速开始)
