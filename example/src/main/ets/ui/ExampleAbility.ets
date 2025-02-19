@@ -1,7 +1,8 @@
-import { UIAbility } from '@kit.AbilityKit';
+import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { DbManager } from '../data/DbManager';
+import { DialogHelper } from '@pura/harmony-dialog';
 
 const DOMAIN = 0x0000;
 
@@ -9,16 +10,12 @@ export const dbManger = new DbManager()
 
 export default class ExampleAbility extends UIAbility {
 
-  // async openDatabase() {
-  //   const resultSet = await this.dbManger.rdbStore.querySql("SELECT simple_query('Simple分词器鸿蒙示例')")
-  //   for (let i = 0; i < resultSet.rowCount; i++) {
-  //     resultSet.goToRow(i)
-  //     const row = resultSet.getRow()
-  //     Object.keys(resultSet.getRow()).forEach((key) => {
-  //       hilog.info(DOMAIN, "RdbStore", `${key}: ${row[key]}`);
-  //     });
-  //   }
-  // }
+  onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    DialogHelper.setDefaultConfig((config) => {
+      config.uiAbilityContext = this.context;
+    })
+  }
+
 
   async onWindowStageCreate(windowStage: window.WindowStage): Promise<void> {
     await dbManger.init(this.context)

@@ -1,5 +1,7 @@
 import { MainTableRow } from '../data/MainTableRow';
+import { mergeNonNull } from '../utils/MergeNonNull';
 import { dbManger } from './ExampleAbility';
+import { IMainTableRowVO } from './model/MainTableRowVO';
 
 export enum Tokenizer {
   JIEBA,
@@ -19,10 +21,23 @@ export class HomeUiState {
 @ObservedV2
 export class HomeViewModel {
   readonly uiState: HomeUiState = new HomeUiState()
-  @Trace results: Array<MainTableRow> = []
+  @Trace results: IMainTableRowVO[] = []
 
-  private _selectAll() {
-    this.results = dbManger.dao.selectAll()
+  private selectAll() {
+    this.results = this.toMainTableRowVO(dbManger.dao.selectAll())
+  }
+
+  private toMainTableRowVO(rows: MainTableRow[]): IMainTableRowVO[] {
+    return rows.map<IMainTableRowVO>((v) => {
+      return {
+        id: v.id,
+        idFormatted: `${v.id}`.padStart(`${this.selectCount()}`.length, '0'),
+        title: v.title,
+        content: v.content,
+        insertDate: v.insertDate,
+        insertDateFormatted: `${v.insertDate.toLocaleDateString()}  ${v.insertDate.toLocaleTimeString()}`
+      }
+    })
   }
 
   selectCount() {
@@ -31,7 +46,7 @@ export class HomeViewModel {
 
   insertRandomData() {
     dbManger.dao.insertRandomData(30)
-    this._selectAll()
+    this.selectAll()
   }
 
   updateAll() {
@@ -42,12 +57,14 @@ export class HomeViewModel {
   @Monitor("uiState.searchValue", "uiState.tokenizer")
   search() {
     if (this.uiState.isSearchValueEmpty()) {
-      this._selectAll()
+      this.selectAll()
       return
     }
-    this.results = dbManger.dao.search(
-      this.uiState.searchValue,
-      Tokenizer[this.uiState.tokenizer].toLocaleLowerCase()
+    this.results = this.toMainTableRowVO(
+      dbManger.dao.search(
+        this.uiState.searchValue,
+        Tokenizer[this.uiState.tokenizer].toLocaleLowerCase()
+      )
     )
   }
 }

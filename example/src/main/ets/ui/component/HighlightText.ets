@@ -12,6 +12,7 @@ import {
 import { text } from '@kit.ArkGraphics2D'
 import { mergeNonNull } from '../../utils/MergeNonNull';
 import { ZeroWidth } from '../../utils/ZeroWidth';
+import { HighlightTextColor } from '../Theme';
 
 export class HighlightSpecialText extends RegExpSpecialText {
   readonly textStyle: text.TextStyle;
@@ -41,9 +42,9 @@ export class HighlightSpecialText extends RegExpSpecialText {
 }
 
 export class CustomTextSpanBuilder extends RegExpSpecialTextSpanBuilder {
-  private readonly _custom: Array<RegExpSpecialText>
+  private readonly _custom: RegExpSpecialText[]
 
-  constructor(custom: Array<RegExpSpecialText>) {
+  constructor(custom: RegExpSpecialText[]) {
     super()
     this._custom = custom
   }
@@ -53,9 +54,8 @@ export class CustomTextSpanBuilder extends RegExpSpecialTextSpanBuilder {
   }
 }
 
-
 export const highlightSpecialText = new HighlightSpecialText({
-  color: ColorUtils.numberTo2DColor(0xFF0000)
+  color: ColorUtils.numberTo2DColor(HighlightTextColor)
 })
 
 export const highlightTextBuilder = new CustomTextSpanBuilder([highlightSpecialText]);

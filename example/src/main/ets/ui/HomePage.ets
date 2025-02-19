@@ -1,28 +1,14 @@
 import { TextOverflowPosition } from '@candies/extended_text'
-import { MainTableRow } from '../data/MainTableRow'
 import { HomeViewModel, Tokenizer } from './HomeViewModel'
-import { material3PrimaryColor, P } from './Theme'
+import { Material3PrimaryColor, P } from './Theme'
 import HighlightText, { highlightSpecialText } from './component/HighlightText'
-
+import { DialogHelper } from '@pura/harmony-dialog'
+import buildMainTableRowDialog from './component/MainTableRowDialog'
+import { IMainTableRowVO } from './model/MainTableRowVO'
 
 @Entry
 @Component
 struct HomePage {
-  @Builder
-  NavigationTitle() {
-    Column() {
-      Text($r("app.string.HomePageAppTitle"))
-        .fontColor(Color.White)
-        .fontWeight(FontWeight.Bolder)
-        .fontSize(24)
-        .width('100%')
-        .padding(P.MIDDLE)
-    }
-    .justifyContent(FlexAlign.Center)
-    .height('100%')
-    .width('100%')
-  }
-
   private readonly _viewModel = new HomeViewModel()
 
   viewModel() {
@@ -40,7 +26,7 @@ struct HomePage {
     [Tokenizer.SIMPLE, $r("app.string.HomePageTokenizerSimple")]
   ])
 
-  aboutToAppear(): void {
+  aboutToAppear() {
     this.viewModel().insertRandomData()
   }
 
@@ -64,7 +50,7 @@ struct HomePage {
             Text($r("app.string.HomePageTokenizer"))
             Select(
               Array.from(this.tokenizer2string.values())
-                .map<SelectOption>((value, _index) => {
+                .map<SelectOption>((value) => {
                   return { value: value }
                 })
             )
@@ -76,16 +62,13 @@ struct HomePage {
           }
 
           Blank().layoutWeight(1)
-
           Button() {
             Text() {
-              SymbolSpan($r('sys.symbol.arrow_clockwise'))
-                .fontSize(16)
-            }
-            .padding(P.EXTRA_SMALL * 2)
+              SymbolSpan($r('sys.symbol.arrow_clockwise')).fontSize(16)
+            }.padding(P.EXTRA_SMALL * 2)
           }
           .backgroundColor(Color.Transparent)
-          .onClick((_) => this.viewModel().updateAll())
+          .onClick(() => this.viewModel().updateAll())
         }
         .padding({ left: P.MIDDLE, right: P.MIDDLE })
         .width('100%')
@@ -93,31 +76,31 @@ struct HomePage {
 
         // 搜索结果
         List() {
-          ForEach(this.viewModel().results, (item: MainTableRow) => {
+          ForEach(this.viewModel().results, (row: IMainTableRowVO) => {
             ListItem() {
               Row({ space: P.SMALL }) {
-                Text(`${item.id}`.padStart(`${this.viewModel().selectCount()}`.length, "0"))
+                Text(row.idFormatted)
                   .fontSize(48)
                   .fontWeight(600)
                   .fontFeature('"ss01" on') // 等宽数字
                 Column({ space: P.EXTRA_SMALL }) {
                   Column({ space: P.EXTRA_SMALL }) {
                     HighlightText({
-                      text: item.title,
+                      text: row.title,
                       fontSize: 20,
                       overflowPosition: TextOverflowPosition.end
                     })
                     HighlightText({
-                      text: item.content,
+                      text: row.content,
                       fontSize: 12,
-                      overflowPosition: highlightSpecialText.regExp.test(item.content)
+                      overflowPosition: highlightSpecialText.regExp.test(row.content)
                         ? TextOverflowPosition.auto // 有高亮文本才寻找高亮文本的位置进行显示，否则会崩溃
                         : TextOverflowPosition.end
                     })
                   }
                   .alignItems(HorizontalAlign.Start)
 
-                  Text(`${item.insertDate.toLocaleDateString()}  ${item.insertDate.toLocaleTimeString()}`)
+                  Text(row.insertDateFormatted)
                     .fontSize(10)
                     .width('100%')
                     .textAlign(TextAlign.End)
@@ -129,7 +112,12 @@ struct HomePage {
               .padding({ left: P.MIDDLE, right: P.MIDDLE })
             }
             .onClick(() => {
-              // this.dialogController.open()
+              const dialogId = "MainTableRowDialog"
+              this.getUIContext().getFocusController().clearFocus()
+              DialogHelper.showCustomDialog(wrapBuilder(buildMainTableRowDialog), {
+                item: row,
+                dialogId: dialogId
+              })
             })
           })
         }
@@ -139,10 +127,25 @@ struct HomePage {
         .layoutWeight(1)
       }
     }
-    .title(this.NavigationTitle, { backgroundColor: material3PrimaryColor })
+    .title(NavigationTitle, { backgroundColor: Material3PrimaryColor })
     .titleMode(NavigationTitleMode.Mini)
     .hideBackButton(true)
     .height('100%')
     .width('100%')
   }
+}
+
+@Builder
+function NavigationTitle() {
+  Column() {
+    Text($r("app.string.HomePageAppTitle"))
+      .fontColor(Color.White)
+      .fontWeight(FontWeight.Bolder)
+      .fontSize(24)
+      .width('100%')
+      .padding(P.MIDDLE)
+  }
+  .justifyContent(FlexAlign.Center)
+  .height('100%')
+  .width('100%')
 }

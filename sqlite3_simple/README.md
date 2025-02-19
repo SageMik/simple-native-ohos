@@ -73,7 +73,7 @@ this.db.querySql("SELECT jieba_query('Jieba分词初始化（提前加载避免�
  * @param tokenizer 分词器，取值：jieba, simple
  * @returns 搜索结果
  */
-search(value: string, tokenizer: string): Array<MainTableRow> {
+search(value: string, tokenizer: string): MainTableRow[] {
   const wrapperSql = `'${ZeroWidth.start}', '${ZeroWidth.end}'`
   const resultSet = this.db.querySqlSync(`
     SELECT

@@ -77,7 +77,7 @@ export class MainTableDao {
    * @param resultSet 查询结果
    * @returns 查询结果转换为的实体类
    */
-  private _toMainTableRows(resultSet: relationalStore.ResultSet): Array<MainTableRow> {
+  private _toMainTableRows(resultSet: relationalStore.ResultSet): MainTableRow[] {
     return Array.from<void, MainTableRow>({ length: resultSet.rowCount }, (_, index) => {
       resultSet.goToRow(index)
       const row = resultSet.getRow()
@@ -97,7 +97,7 @@ export class MainTableDao {
     return new MainTableRow({
       id: 0,
       title: randomWords(2, 3),
-      content: randomWords(4, 10),
+      content: randomWords(6, 16),
       insertDate: new Date(Date.now())
     })
   }
@@ -121,7 +121,7 @@ export class MainTableDao {
   /**
    * @returns 主表的所有数据
    */
-  selectAll(): Array<MainTableRow> {
+  selectAll(): MainTableRow[] {
     const resultSet = this.db.querySync(this._selectAllPredicates)
     return this._toMainTableRows(resultSet)
   }
@@ -141,7 +141,7 @@ export class MainTableDao {
    * @param tokenizer 分词器，取值：jieba, simple
    * @returns 搜索结果
    */
-  search(value: string, tokenizer: string): Array<MainTableRow> {
+  search(value: string, tokenizer: string): MainTableRow[] {
     const wrapperSql = `'${ZeroWidth.start}', '${ZeroWidth.end}'`
     const resultSet = this.db.querySqlSync(`
       SELECT
