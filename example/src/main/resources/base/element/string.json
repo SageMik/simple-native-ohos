@@ -15,6 +15,10 @@
     {
       "name": "HomePageTokenizerSimple",
       "value": "Simple"
+    },
+    {
+      "name": "HomePageDialogConfirm",
+      "value": "确定"
     }
   ]
 }

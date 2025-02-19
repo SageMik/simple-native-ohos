@@ -1,21 +1,9 @@
-import {
-  ColorUtils,
-  ExtendedText,
-  SpecialTextSpanBuilder,
-  TextOverflowPosition,
-  TextOverflowWidget
-} from '@candies/extended_text'
+import { TextOverflowPosition } from '@candies/extended_text'
 import { MainTableRow } from '../data/MainTableRow'
-import { CustomTextSpanBuilder, ZeroWidthText } from '../utils/ZeroWidth'
-import HomeViewModel from './viewmodel/HomeViewModel'
-import { text } from '@kit.ArkGraphics2D'
-import { Tokenizer } from './viewmodel/HomeUiState'
+import { HomeViewModel, Tokenizer } from './HomeViewModel'
+import { material3PrimaryColor, P } from './Theme'
+import HighlightText, { highlightSpecialText } from './component/HighlightText'
 
-class P {
-  static readonly MIDDLE = 16
-  static readonly SMALL = 8
-  static readonly EXTRA_SMALL = 2
-}
 
 @Entry
 @Component
@@ -27,20 +15,15 @@ struct HomePage {
         .fontColor(Color.White)
         .fontWeight(FontWeight.Bolder)
         .fontSize(24)
-        .width("100%")
+        .width('100%')
         .padding(P.MIDDLE)
     }
     .justifyContent(FlexAlign.Center)
-    .height("100%")
-    .width("100%")
+    .height('100%')
+    .width('100%')
   }
 
   private readonly _viewModel = new HomeViewModel()
-  private readonly _highlightTextBuilder = new CustomTextSpanBuilder([
-    new ZeroWidthText({
-      color: ColorUtils.numberTo2DColor(0xFF0000)
-    })
-  ]);
 
   viewModel() {
     return this._viewModel
@@ -52,7 +35,7 @@ struct HomePage {
 
   // readonly dataSource = new DataSource(this.viewModel.results)
 
-  private readonly _tokenizer2string = new Map([
+  private readonly tokenizer2string = new Map([
     [Tokenizer.JIEBA, $r("app.string.HomePageTokenizerJieba")],
     [Tokenizer.SIMPLE, $r("app.string.HomePageTokenizerSimple")]
   ])
@@ -64,6 +47,7 @@ struct HomePage {
   build() {
     Navigation() {
       Column({ space: P.MIDDLE }) {
+        // 搜索栏
         Search()
           .borderRadius(P.SMALL)
           .margin({
@@ -72,18 +56,24 @@ struct HomePage {
             top: P.MIDDLE,
             bottom: 0
           })
-          .onChange((value, _) => {
-            this.uiState().searchValue = value
-            this.viewModel().search()
-          })
+          .onChange((value) => this.uiState().searchValue = value)
 
+        // 搜索栏下方选项
         Row({ space: P.MIDDLE }) {
-          SelectInMap({
-            label: $r("app.string.HomePageTokenizer"),
-            t2string: this._tokenizer2string as Map<ESObject, ResourceStr>,
-            getValue: () => this.uiState().tokenizer,
-            setValue: (index) => this.uiState().tokenizer = index
-          })
+          Row() {
+            Text($r("app.string.HomePageTokenizer"))
+            Select(
+              Array.from(this.tokenizer2string.values())
+                .map<SelectOption>((value, _index) => {
+                  return { value: value }
+                })
+            )
+              .value(this.tokenizer2string.get(this.uiState().tokenizer))
+              .selected(this.uiState().tokenizer)
+              .onSelect((index) => this.uiState().tokenizer = index)
+              .controlSize(ControlSize.SMALL)
+              .borderRadius(P.SMALL)
+          }
 
           Blank().layoutWeight(1)
 
@@ -95,24 +85,18 @@ struct HomePage {
             .padding(P.EXTRA_SMALL * 2)
           }
           .backgroundColor(Color.Transparent)
-          .onClick(async (_) => {
-            this.viewModel().updateAll()
-          })
+          .onClick((_) => this.viewModel().updateAll())
         }
         .padding({ left: P.MIDDLE, right: P.MIDDLE })
         .width('100%')
         .justifyContent(FlexAlign.SpaceBetween)
 
+        // 搜索结果
         List() {
           ForEach(this.viewModel().results, (item: MainTableRow) => {
             ListItem() {
               Row({ space: P.SMALL }) {
-                Text(item.id.toString()
-                  .padStart(this.viewModel()
-                    .results
-                    .length
-                    .toString()
-                    .length, "0"))
+                Text(`${item.id}`.padStart(`${this.viewModel().selectCount()}`.length, "0"))
                   .fontSize(48)
                   .fontWeight(600)
                   .fontFeature('"ss01" on') // 等宽数字
@@ -121,16 +105,14 @@ struct HomePage {
                     HighlightText({
                       text: item.title,
                       fontSize: 20,
-                      specialTextSpanBuilder: this._highlightTextBuilder,
                       overflowPosition: TextOverflowPosition.end
                     })
                     HighlightText({
                       text: item.content,
                       fontSize: 12,
-                      specialTextSpanBuilder: this._highlightTextBuilder,
-                      overflowPosition: this.uiState().isSearchValueEmpty()
-                        ? TextOverflowPosition.end
-                        : TextOverflowPosition.auto
+                      overflowPosition: highlightSpecialText.regExp.test(item.content)
+                        ? TextOverflowPosition.auto // 有高亮文本才寻找高亮文本的位置进行显示，否则会崩溃
+                        : TextOverflowPosition.end
                     })
                   }
                   .alignItems(HorizontalAlign.Start)
@@ -146,6 +128,9 @@ struct HomePage {
               }
               .padding({ left: P.MIDDLE, right: P.MIDDLE })
             }
+            .onClick(() => {
+              // this.dialogController.open()
+            })
           })
         }
         .cachedCount(5)
@@ -154,75 +139,10 @@ struct HomePage {
         .layoutWeight(1)
       }
     }
-    .title
-    (this
-      .NavigationTitle
-      , {
-        backgroundColor: 0x6750A4
-      }
-
-    )
+    .title(this.NavigationTitle, { backgroundColor: material3PrimaryColor })
     .titleMode(NavigationTitleMode.Mini)
     .hideBackButton(true)
     .height('100%')
     .width('100%')
-  }
-}
-
-@ComponentV2
-struct HighlightText {
-  @Param @Require readonly text: string
-  @Param @Require readonly fontSize: number
-  @Param @Require specialTextSpanBuilder: SpecialTextSpanBuilder
-  @Param @Require readonly overflowPosition: TextOverflowPosition
-
-  build() {
-    ExtendedText({
-      text: this.text,
-      specialTextSpanBuilder: this.specialTextSpanBuilder,
-      paragraphStyle: {
-        textStyle: {
-          color: ColorUtils.resourceColorTo2DColor($r('sys.color.font'), getContext(this)),
-          fontSize: vp2px(this.fontSize),
-          fontWeight: text.FontWeight.W500
-        },
-        maxLines: 1,
-      },
-      overflowWidget: new TextOverflowWidget({
-        builder: wrapBuilder(buildEllipsisText),
-        position: this.overflowPosition
-      }),
-    })
-  }
-}
-
-@Builder
-function buildEllipsisText() {
-  Text("\u2026") // 省略号
-}
-
-
-@ComponentV2
-struct SelectInMap {
-  @Param @Require readonly label: ResourceStr
-  @Param @Require readonly t2string: Map<ESObject, ResourceStr>
-  @Param @Require readonly getValue: () => ESObject
-  @Param @Require readonly setValue: (index: number, value: string) => void
-
-  build() {
-    Row() {
-      Text(this.label)
-      Select(
-        Array.from(this.t2string.values())
-          .map<SelectOption>((value, _index) => {
-            return { value: value }
-          })
-      )
-        .value(this.t2string.get(this.getValue()))
-        .selected(this.getValue())
-        .onSelect(this.setValue)
-        .controlSize(ControlSize.SMALL)
-        .borderRadius(P.SMALL)
-    }
   }
 }

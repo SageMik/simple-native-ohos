@@ -127,6 +127,15 @@ export class MainTableDao {
   }
 
   /**
+   * @returns 主表的数据数量
+   */
+  selectCount(): number {
+    const resultSet = this.db.querySqlSync(`SELECT COUNT(*) FROM ${mainTable}`)
+    resultSet.goToFirstRow()
+    return resultSet.getLong(0)
+  }
+
+  /**
    * 通过指定分词器 `tokenizer` 搜索
    * @param value 关键词
    * @param tokenizer 分词器，取值：jieba, simple
