@@ -4,6 +4,10 @@
 
 基于 [Simple](https://github.com/wangfenjin/simple) (支持中文和拼音的 SQLite fts5 全文搜索扩展) 的 HarmonyOS NEXT 库，用于 [@ohos.data.relationalStore (关系型数据库)](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-data-relationalstore-V5?catalogVersion=V5) 的中文和拼音全文搜索。
 
+| 示例                                        | 示例                                        |
+|-------------------------------------------|-------------------------------------------|
+| ![1.png](../sqlite3_simple/example/1.png) | ![2.png](../sqlite3_simple/example/2.png) |
+
 - [前置准备](#前置准备)
 - [快速开始](#快速开始)
   - [1. 添加本库](#1-添加本库)
@@ -52,7 +56,7 @@ this._db = await relationalStore.getRdbStore(context, STORE_CONFIG)
 await this.db.executeSql("SELECT jieba_dict(?)", [Simple.getJiebaDictPath(context)])
 ```
 
-如启用结巴分词，推荐在正式查询前执行一次查询，例如：
+推荐在正式查询前执行一次查询，例如：
 
 ```typescript
 this.db.querySql("SELECT jieba_query('Jieba分词初始化（提前加载避免后续等待）')")
@@ -93,6 +97,8 @@ search(value: string, tokenizer: string): MainTableRow[] {
 [Simple](https://github.com/wangfenjin/simple)：支持中文和拼音的 SQLite FTS5 全文搜索扩展。
 
 [extended_text](https://github.com/HarmonyCandies/extended_text)：一个文本组件，支持特殊文本效果。
+
+[harmony-dialog](https://gitee.com/tongyuyan/harmony-utils/tree/master/harmony_dialog)：一款极为简单易用的零侵入弹窗，仅需一行代码即可轻松实现，无论在何处都能够轻松弹出。
 
 ## 相关项目
 

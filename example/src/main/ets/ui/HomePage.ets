@@ -1,10 +1,11 @@
 import { TextOverflowPosition } from '@candies/extended_text'
 import { HomeViewModel, Tokenizer } from './HomeViewModel'
-import { Material3PrimaryColor, P } from './Theme'
-import HighlightText, { highlightSpecialText } from './component/HighlightText'
+import { Material3OnPrimaryColor, Material3PrimaryColor, P } from './Theme'
+import HighlightText, { ColorfulHighlightText } from './component/HighlightText'
 import { DialogHelper } from '@pura/harmony-dialog'
 import buildMainTableRowDialog from './component/MainTableRowDialog'
 import { IMainTableRowVO } from './model/MainTableRowVO'
+import { JSON } from '@kit.ArkTS'
 
 @Entry
 @Component
@@ -19,8 +20,6 @@ struct HomePage {
     return this.viewModel().uiState
   }
 
-  // readonly dataSource = new DataSource(this.viewModel.results)
-
   private readonly tokenizer2string = new Map([
     [Tokenizer.JIEBA, $r("app.string.HomePageTokenizerJieba")],
     [Tokenizer.SIMPLE, $r("app.string.HomePageTokenizerSimple")]
@@ -32,20 +31,20 @@ struct HomePage {
 
   build() {
     Navigation() {
-      Column({ space: P.MIDDLE }) {
+      Column({ space: P.Middle }) {
         // 搜索栏
         Search()
-          .borderRadius(P.SMALL)
+          .borderRadius(P.Small)
           .margin({
-            left: P.MIDDLE,
-            right: P.MIDDLE,
-            top: P.MIDDLE,
+            left: P.Middle,
+            right: P.Middle,
+            top: P.Middle,
             bottom: 0
           })
           .onChange((value) => this.uiState().searchValue = value)
 
         // 搜索栏下方选项
-        Row({ space: P.MIDDLE }) {
+        Row({ space: P.Middle }) {
           Row() {
             Text($r("app.string.HomePageTokenizer"))
             Select(
@@ -58,19 +57,19 @@ struct HomePage {
               .selected(this.uiState().tokenizer)
               .onSelect((index) => this.uiState().tokenizer = index)
               .controlSize(ControlSize.SMALL)
-              .borderRadius(P.SMALL)
+              .borderRadius(P.Small)
           }
 
           Blank().layoutWeight(1)
           Button() {
             Text() {
               SymbolSpan($r('sys.symbol.arrow_clockwise')).fontSize(16)
-            }.padding(P.EXTRA_SMALL * 2)
+            }.padding(P.ExtraSmall * 2)
           }
           .backgroundColor(Color.Transparent)
           .onClick(() => this.viewModel().updateAll())
         }
-        .padding({ left: P.MIDDLE, right: P.MIDDLE })
+        .padding({ left: P.Middle, right: P.Middle })
         .width('100%')
         .justifyContent(FlexAlign.SpaceBetween)
 
@@ -78,13 +77,13 @@ struct HomePage {
         List() {
           ForEach(this.viewModel().results, (row: IMainTableRowVO) => {
             ListItem() {
-              Row({ space: P.SMALL }) {
+              Row({ space: P.Small }) {
                 Text(row.idFormatted)
                   .fontSize(48)
                   .fontWeight(600)
                   .fontFeature('"ss01" on') // 等宽数字
-                Column({ space: P.EXTRA_SMALL }) {
-                  Column({ space: P.EXTRA_SMALL }) {
+                Column({ space: P.ExtraSmall }) {
+                  Column({ space: P.ExtraSmall }) {
                     HighlightText({
                       text: row.title,
                       fontSize: 20,
@@ -93,7 +92,7 @@ struct HomePage {
                     HighlightText({
                       text: row.content,
                       fontSize: 12,
-                      overflowPosition: highlightSpecialText.regExp.test(row.content)
+                      overflowPosition: ColorfulHighlightText.regExp.test(row.content)
                         ? TextOverflowPosition.auto // 有高亮文本才寻找高亮文本的位置进行显示，否则会崩溃
                         : TextOverflowPosition.end
                     })
@@ -109,7 +108,7 @@ struct HomePage {
                 .alignItems(HorizontalAlign.Start)
                 .layoutWeight(1)
               }
-              .padding({ left: P.MIDDLE, right: P.MIDDLE })
+              .padding({ left: P.Middle, right: P.Middle })
             }
             .onClick(() => {
               const dialogId = "MainTableRowDialog"
@@ -119,7 +118,7 @@ struct HomePage {
                 dialogId: dialogId
               })
             })
-          })
+          }, (item: IMainTableRowVO) => JSON.stringify(item))
         }
         .cachedCount(5)
         .width('100%')
@@ -139,11 +138,11 @@ struct HomePage {
 function NavigationTitle() {
   Column() {
     Text($r("app.string.HomePageAppTitle"))
-      .fontColor(Color.White)
+      .fontColor(Material3OnPrimaryColor)
       .fontWeight(FontWeight.Bolder)
       .fontSize(24)
       .width('100%')
-      .padding(P.MIDDLE)
+      .padding(P.Middle)
   }
   .justifyContent(FlexAlign.Center)
   .height('100%')

@@ -7,6 +7,6 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/SageMik",
   "keywords": ["sqlite3", "native", "分词器", "fts5", "CMake"],
-  "repository": "https://github.com/SageMik/sqlite_simple_ohos/tree/main/simple_native_ohos",
+  "repository": "https://github.com/SageMik/sqlite3_simple_ohos/tree/main/simple_native_ohos",
   "dependencies": {}
 }

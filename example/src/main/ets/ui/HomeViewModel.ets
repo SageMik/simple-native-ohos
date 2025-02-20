@@ -1,5 +1,4 @@
 import { MainTableRow } from '../data/MainTableRow';
-import { mergeNonNull } from '../utils/MergeNonNull';
 import { dbManger } from './ExampleAbility';
 import { IMainTableRowVO } from './model/MainTableRowVO';
 
@@ -20,8 +19,8 @@ export class HomeUiState {
 
 @ObservedV2
 export class HomeViewModel {
-  readonly uiState: HomeUiState = new HomeUiState()
-  @Trace results: IMainTableRowVO[] = []
+  readonly uiState = new HomeUiState()
+  @Trace results: IMainTableRowVO[] | undefined
 
   private selectAll() {
     this.results = this.toMainTableRowVO(dbManger.dao.selectAll())
@@ -56,13 +55,14 @@ export class HomeViewModel {
 
   @Monitor("uiState.searchValue", "uiState.tokenizer")
   search() {
-    if (this.uiState.isSearchValueEmpty()) {
+    const searchValue = this.uiState.searchValue.trim()
+    if (searchValue.length === 0) {
       this.selectAll()
       return
     }
     this.results = this.toMainTableRowVO(
       dbManger.dao.search(
-        this.uiState.searchValue,
+        searchValue,
         Tokenizer[this.uiState.tokenizer].toLocaleLowerCase()
       )
     )

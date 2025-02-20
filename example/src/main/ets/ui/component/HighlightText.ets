@@ -54,17 +54,17 @@ export class CustomTextSpanBuilder extends RegExpSpecialTextSpanBuilder {
   }
 }
 
-export const highlightSpecialText = new HighlightSpecialText({
+export const ColorfulHighlightText = new HighlightSpecialText({
   color: ColorUtils.numberTo2DColor(HighlightTextColor)
 })
 
-export const highlightTextBuilder = new CustomTextSpanBuilder([highlightSpecialText]);
+export const ColorfulHighlightTextBuilder = new CustomTextSpanBuilder([ColorfulHighlightText]);
 
 @ComponentV2
 export default struct HighlightText {
   @Param @Require readonly text: string
   @Param @Require readonly fontSize: number
-  @Param readonly specialTextSpanBuilder: SpecialTextSpanBuilder = highlightTextBuilder
+  @Param readonly specialTextSpanBuilder: SpecialTextSpanBuilder = ColorfulHighlightTextBuilder
   @Param @Require readonly overflowPosition: TextOverflowPosition
   @Param readonly maxLines: number = 1
   @Param readonly textAlign: text.TextAlign | undefined = undefined

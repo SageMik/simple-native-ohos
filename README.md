@@ -1,10 +1,10 @@
 # sqlite3_simple_ohos
 
-| 模块                                         |                                                                                                                                                                                             | 说明                                        |
-|--------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------|
-| [sqlite3_simple](./sqlite3_simple)         | [![sqlite3-simple](https://img.shields.io/badge/v1.0.0-007ec6?label=sqlite3-simple&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple)             |                                           |
-| [simple_native_ohos](./simple_native_ohos) | [![simple-native-ohos](https://img.shields.io/badge/v1.0.2-007ec6?label=simple-native-ohos&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/simple-native-ohos) |                                           |
-| [example](./example)                       | --                                                                                                                                                                                          | [sqlite3-simple](./sqlite3_simple) 具体使用示例 |
+| 模块                                         |                                                                                                                                                                                             | 说明                                                                                                 |
+|--------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| [sqlite3_simple](./sqlite3_simple)         | [![sqlite3-simple](https://img.shields.io/badge/v1.0.0-007ec6?label=sqlite3-simple&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple)             | 基于 [Simple](https://github.com/wangfenjin/simple) (支持中文和拼音的 SQLite fts5 全文搜索扩展) 的 HarmonyOS NEXT 库 | |
+| [simple_native_ohos](./simple_native_ohos) | [![simple-native-ohos](https://img.shields.io/badge/v1.0.2-007ec6?label=simple-native-ohos&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/simple-native-ohos) | [Simple](https://github.com/wangfenjin/simple) 的 HarmonyOS NEXT 原生库                                |
+| [example](./example)                       | --                                                                                                                                                                                          | [sqlite3-simple](./sqlite3_simple) 的具体使用示例                                                         |
 
 <!-- HEADER -->
 
@@ -13,6 +13,10 @@
 [![OpenHarmony 三方库中心仓](https://img.shields.io/badge/v1.0.0-007ec6?label=OpenHarmony%20%E4%B8%89%E6%96%B9%E5%BA%93%E4%B8%AD%E5%BF%83%E4%BB%93&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple)
 
 基于 [Simple](https://github.com/wangfenjin/simple) (支持中文和拼音的 SQLite fts5 全文搜索扩展) 的 HarmonyOS NEXT 库，用于 [@ohos.data.relationalStore (关系型数据库)](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-data-relationalstore-V5?catalogVersion=V5) 的中文和拼音全文搜索。
+
+| 示例                                        | 示例                                        |
+|-------------------------------------------|-------------------------------------------|
+| ![1.png](./sqlite3_simple/example/1.png) | ![2.png](./sqlite3_simple/example/2.png) |
 
 - [前置准备](#前置准备)
 - [快速开始](#快速开始)
@@ -62,7 +66,7 @@ this._db = await relationalStore.getRdbStore(context, STORE_CONFIG)
 await this.db.executeSql("SELECT jieba_dict(?)", [Simple.getJiebaDictPath(context)])
 ```
 
-如启用结巴分词，推荐在正式查询前执行一次查询，例如：
+推荐在正式查询前执行一次查询，例如：
 
 ```typescript
 this.db.querySql("SELECT jieba_query('Jieba分词初始化（提前加载避免后续等待）')")
@@ -104,14 +108,15 @@ search(value: string, tokenizer: string): MainTableRow[] {
 
 [extended_text](https://github.com/HarmonyCandies/extended_text)：一个文本组件，支持特殊文本效果。
 
+[harmony-dialog](https://gitee.com/tongyuyan/harmony-utils/tree/master/harmony_dialog)：一款极为简单易用的零侵入弹窗，仅需一行代码即可轻松实现，无论在何处都能够轻松弹出。
+
 ### 相关项目
 
 [sqlite3_simple](https://github.com/SageMik/sqlite3_simple)：基于 [Simple](https://github.com/wangfenjin/simple) (支持中文和拼音的 SQLite fts5 全文搜索扩展) 和 [sqlite3.dart](https://github.com/simolus3/sqlite3.dart) 的 Flutter 库，用于 SQLite 中文和拼音全文搜索。
 
 ## simple-native-ohos
 
-[![OpenHarmony 三方库中心仓](https://img.shields.io/badge/v1.0.2-007ec6?label=OpenHarmony%20%E4%B8%89%E6%96%B9%E5%BA%93%E4%B8%AD%E5%BF%83%E4%BB%93&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/simple-native-ohos)
-
+[![OpenHarmony 三方库中心仓](https://img.shields.io/badge/v1.0.3-007ec6?label=OpenHarmony%20%E4%B8%89%E6%96%B9%E5%BA%93%E4%B8%AD%E5%BF%83%E4%BB%93&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/simple-native-ohos)
 
 [Simple](https://github.com/wangfenjin/simple) 的 HarmonyOS NEXT 原生库，与 [simple-native-android](https://github.com/SageMik/simple-native-android) 同步。
 
@@ -119,7 +124,10 @@ search(value: string, tokenizer: string): MainTableRow[] {
 ohpm install simple-native-ohos
 ```
 
-请参考 [`Simple.getNativeLibraryPath()`](./sqlite3_simple/src/main/ets/Simple.ets#L6-L22) 获取 Simple 原生库路径。
+有关如何使用 Simple 原生库，请参考 [sqlite3_simple](./sqlite3_simple)、[example](./example) 模块，其中：
+
+1. [sqlite3_simple](./sqlite3_simple) 依赖于本库，其 [`Simple.getNativeLibraryPath()`](./sqlite3_simple/src/main/ets/Simple.ets) 展示了如何获取 Simple 原生库路径。
+2. [example](./example) 基于 [sqlite3_simple](./sqlite3_simple) ，展示了如何将 Simple 原生库加载到数据库中。
 
 ### 相关项目
 

@@ -1,5 +1,5 @@
 import { TextOverflowPosition } from '@candies/extended_text'
-import HighlightText, { highlightSpecialText } from './HighlightText'
+import HighlightText, { ColorfulHighlightText } from './HighlightText'
 import { text } from '@kit.ArkGraphics2D'
 import { P } from '../Theme'
 import { DialogHelper } from '@pura/harmony-dialog'
@@ -12,7 +12,7 @@ export interface MainTableRowDialogOption {
 
 @Builder
 export default function buildMainTableRowDialog(option: MainTableRowDialogOption) {
-  Column({ space: P.SMALL + P.EXTRA_SMALL }) {
+  Column({ space: P.Small + P.ExtraSmall }) {
     Text(option.item.idFormatted)
       .fontSize(64)
       .fontWeight(600)
@@ -27,7 +27,7 @@ export default function buildMainTableRowDialog(option: MainTableRowDialogOption
     HighlightText({
       text: option.item.content,
       fontSize: 18,
-      overflowPosition: highlightSpecialText.regExp.test(option.item.content)
+      overflowPosition: ColorfulHighlightText.regExp.test(option.item.content)
         ? TextOverflowPosition.auto
         : TextOverflowPosition.end,
       maxLines: undefined
@@ -35,10 +35,10 @@ export default function buildMainTableRowDialog(option: MainTableRowDialogOption
     Button($r('app.string.HomePageDialogConfirm'))
       .onClick(() => DialogHelper.closeDialog(option.dialogId))
       .type(ButtonType.Normal)
-      .borderRadius(P.SMALL)
+      .borderRadius(P.Small)
       .backgroundColor(0x6750A4)
       .width('100%')
   }
-  .padding(P.MIDDLE)
+  .padding(P.Middle)
   .backgroundColor(Color.White)
 }
