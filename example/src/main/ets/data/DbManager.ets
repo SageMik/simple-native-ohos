@@ -23,13 +23,13 @@ export class DbManager {
     await relationalStore.deleteRdbStore(context, "example.db")
 
     // 加载 Simple 扩展
-    const LIB_SIMPLE = await Simple.getNativeLibraryPath(context)
-    const STORE_CONFIG: relationalStore.StoreConfig = {
+    const libSimple = await Simple.getNativeLibraryPath(context)
+    const storeConfig: relationalStore.StoreConfig = {
       name: "example.db",
       securityLevel: relationalStore.SecurityLevel.S1,
-      pluginLibs: [LIB_SIMPLE]
+      pluginLibs: [libSimple]
     }
-    this._db = await relationalStore.getRdbStore(context, STORE_CONFIG)
+    this._db = await relationalStore.getRdbStore(context, storeConfig)
 
     // 修改 Simple 加载结巴分词字典的路径
     await this.db.executeSql("SELECT jieba_dict(?)", [Simple.getJiebaDictPath(context)])

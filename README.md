@@ -1,16 +1,16 @@
 # sqlite3_simple_ohos
 
-| 模块                                         |                                                                                                                                                                                             | 说明                                                                                                 |
-|--------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
-| [sqlite3_simple](./sqlite3_simple)         | [![sqlite3-simple](https://img.shields.io/badge/v1.0.0-007ec6?label=sqlite3-simple&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple)             | 基于 [Simple](https://github.com/wangfenjin/simple) (支持中文和拼音的 SQLite fts5 全文搜索扩展) 的 HarmonyOS NEXT 库 | |
-| [simple_native_ohos](./simple_native_ohos) | [![simple-native-ohos](https://img.shields.io/badge/v1.0.2-007ec6?label=simple-native-ohos&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/simple-native-ohos) | [Simple](https://github.com/wangfenjin/simple) 的 HarmonyOS NEXT 原生库                                |
-| [example](./example)                       | --                                                                                                                                                                                          | [sqlite3-simple](./sqlite3_simple) 的具体使用示例                                                         |
+| 模块                                         |                                                                                                                                                                                                                                                                                                                                        |
+|--------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [sqlite3_simple](./sqlite3_simple)         | [![sqlite3-simple](https://img.shields.io/badge/dynamic/json?label=sqlite3-simple&style=for-the-badge&logo=harmonyos&url=https%3A%2F%2Fohpm.openharmony.cn%2Fohpmweb%2Fregistry%2Foh-package%2Fopenapi%2Fv1%2Fdetail%2Fsqlite3-simple&query=%24.body.version)](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple)                 |
+| [simple_native_ohos](./simple_native_ohos) | [![simple-native-ohos](https://img.shields.io/badge/dynamic/json?label=simple-native-ohos&style=for-the-badge&logo=harmonyos&url=https%3A%2F%2Fohpm.openharmony.cn%2Fohpmweb%2Fregistry%2Foh-package%2Fopenapi%2Fv1%2Fdetail%2Fsimple-native-ohos&query=%24.body.version)](https://ohpm.openharmony.cn/#/cn/detail/simple-native-ohos) | 
+| [example](./example)                       | [sqlite3-simple](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple) 的具体使用示例                                                                                                                                                                                                                                                       |
 
 <!-- HEADER -->
 
 ## sqlite3-simple
 
-[![OpenHarmony 三方库中心仓](https://img.shields.io/badge/v1.0.0-007ec6?label=OpenHarmony%20%E4%B8%89%E6%96%B9%E5%BA%93%E4%B8%AD%E5%BF%83%E4%BB%93&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple)
+[![OpenHarmony 三方库中心仓](https://img.shields.io/badge/dynamic/json?label=OpenHarmony%20%E4%B8%89%E6%96%B9%E5%BA%93%E4%B8%AD%E5%BF%83%E4%BB%93&style=for-the-badge&logo=harmonyos&url=https%3A%2F%2Fohpm.openharmony.cn%2Fohpmweb%2Fregistry%2Foh-package%2Fopenapi%2Fv1%2Fdetail%2Fsqlite3-simple&query=%24.body.version)](https://ohpm.openharmony.cn/#/cn/detail/sqlite3-simple)
 
 基于 [Simple](https://github.com/wangfenjin/simple) (支持中文和拼音的 SQLite fts5 全文搜索扩展) 的 HarmonyOS NEXT 库，用于 [@ohos.data.relationalStore (关系型数据库)](https://developer.huawei.com/consumer/cn/doc/harmonyos-references-V5/js-apis-data-relationalstore-V5?catalogVersion=V5) 的中文和拼音全文搜索。
 
@@ -51,13 +51,13 @@ ohpm install sqlite3-simple
 ```typescript
 import { Simple } from 'sqlite3-simple';
 
-const LIB_SIMPLE = await Simple.getNativeLibraryPath(context)
-const STORE_CONFIG: relationalStore.StoreConfig = {
+const libSimple = await Simple.getNativeLibraryPath(context)
+const storeConfig: relationalStore.StoreConfig = {
     name: "example.db",
     securityLevel: relationalStore.SecurityLevel.S1,
-    pluginLibs: [LIB_SIMPLE]
+    pluginLibs: [libSimple]
 }
-this._db = await relationalStore.getRdbStore(context, STORE_CONFIG)
+this._db = await relationalStore.getRdbStore(context, storeConfig)
 ```
 
 如需启用 结巴分词 (Jieba) ，请通过 `Simple.getJiebaDictPath(context)` 获取结巴分词字典文件路径，并执行如下 SQL 语句修改 Simple 扩展查找字典文件的路径：
@@ -116,7 +116,7 @@ search(value: string, tokenizer: string): MainTableRow[] {
 
 ## simple-native-ohos
 
-[![OpenHarmony 三方库中心仓](https://img.shields.io/badge/v1.0.3-007ec6?label=OpenHarmony%20%E4%B8%89%E6%96%B9%E5%BA%93%E4%B8%AD%E5%BF%83%E4%BB%93&style=for-the-badge&logo=harmonyos)](https://ohpm.openharmony.cn/#/cn/detail/simple-native-ohos)
+[![OpenHarmony 三方库中心仓](https://img.shields.io/badge/dynamic/json?label=OpenHarmony%20%E4%B8%89%E6%96%B9%E5%BA%93%E4%B8%AD%E5%BF%83%E4%BB%93&style=for-the-badge&logo=harmonyos&url=https%3A%2F%2Fohpm.openharmony.cn%2Fohpmweb%2Fregistry%2Foh-package%2Fopenapi%2Fv1%2Fdetail%2Fsimple-native-ohos&query=%24.body.version)](https://ohpm.openharmony.cn/#/cn/detail/simple-native-ohos)
 
 [Simple](https://github.com/wangfenjin/simple) 的 HarmonyOS NEXT 原生库，与 [simple-native-android](https://github.com/SageMik/simple-native-android) 同步。
 
