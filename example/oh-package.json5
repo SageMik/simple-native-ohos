@@ -1,0 +1,14 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "Please describe the basic information.",
+  "main": "",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "sqlite3-simple": "file:../sqlite3_simple",
+    "@candies/extended_text": "^1.1.0",
+    "@pura/harmony-dialog": "^1.1.2",
+  }
+}
+

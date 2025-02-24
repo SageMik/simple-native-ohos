@@ -28,6 +28,22 @@
     {
       "name": "simple_native_ohos",
       "srcPath": "./simple_native_ohos"
+    },
+    {
+      "name": "sqlite3_simple",
+      "srcPath": "./sqlite3_simple"
+    },
+    {
+      "name": "example",
+      "srcPath": "./example",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,36 @@
+{
+  "module": {
+    "name": "example",
+    "type": "entry",
+    "mainElement": "ExampleAbility",
+    "deviceTypes": [
+      "phone",
+      "tablet",
+      "2in1"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "ExampleAbility",
+        "srcEntry": "./ets/ui/ExampleAbility.ets",
+        "icon": "$media:layered_image",
+        "label": "$string:HomePageAppTitle",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ]
+      }
+    ],
+  }
+}
