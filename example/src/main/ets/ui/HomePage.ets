@@ -25,7 +25,13 @@ struct HomePage {
     [Tokenizer.SIMPLE, $r("app.string.HomePageTokenizerSimple")]
   ])
 
+  @State isLoading: boolean = true
+
   aboutToAppear() {
+    this.viewModel().onResultsChangedSet.clear()
+    this.viewModel().onResultsChangedSet.add((results) => {
+      animateTo({ duration: 300 }, () => this.isLoading = !results)
+    })
     this.viewModel().insertRandomData()
   }
 
@@ -74,56 +80,73 @@ struct HomePage {
         .justifyContent(FlexAlign.SpaceBetween)
 
         // 搜索结果
-        List() {
-          ForEach(this.viewModel().results, (row: IMainTableRowVO) => {
-            ListItem() {
-              Row({ space: P.Small }) {
-                Text(row.idFormatted)
-                  .fontSize(48)
-                  .fontWeight(600)
-                  .fontFeature('"ss01" on') // 等宽数字
-                Column({ space: P.ExtraSmall }) {
-                  Column({ space: P.ExtraSmall }) {
-                    HighlightText({
-                      text: row.title,
-                      fontSize: 20,
-                      overflowPosition: TextOverflowPosition.end
-                    })
-                    HighlightText({
-                      text: row.content,
-                      fontSize: 12,
-                      overflowPosition: ColorfulHighlightText.regExp.test(row.content)
-                        ? TextOverflowPosition.auto // 有高亮文本才寻找高亮文本的位置进行显示，否则会崩溃
-                        : TextOverflowPosition.end
-                    })
-                  }
-                  .alignItems(HorizontalAlign.Start)
-
-                  Text(row.insertDateFormatted)
-                    .fontSize(10)
-                    .width('100%')
-                    .textAlign(TextAlign.End)
-                    .fontColor(Color.Grey)
-                }
-                .alignItems(HorizontalAlign.Start)
-                .layoutWeight(1)
-              }
-              .padding({ left: P.Middle, right: P.Middle })
+        Stack() {
+          if (this.isLoading) {
+            Stack({ alignContent: Alignment.Center }) {
+              LoadingProgress()
+                .enableLoading(true)
+                .width(72)
+                .height(72)
+                .color(Material3PrimaryColor)
             }
-            .onClick(() => {
-              const dialogId = "MainTableRowDialog"
-              this.getUIContext().getFocusController().clearFocus()
-              DialogHelper.showCustomDialog(wrapBuilder(buildMainTableRowDialog), {
-                item: row,
-                dialogId: dialogId
-              })
-            })
-          }, (item: IMainTableRowVO) => JSON.stringify(item))
-        }
-        .cachedCount(5)
-        .width('100%')
-        .height(0)
-        .layoutWeight(1)
+            .width('100%')
+            .height('100%')
+            .geometryTransition("list")
+            .transition(TransitionEffect.OPACITY)
+          } else {
+            List() {
+              ForEach(this.viewModel().results, (row: IMainTableRowVO) => {
+                ListItem() {
+                  Row({ space: P.Small }) {
+                    Text(row.idFormatted)
+                      .fontSize(48)
+                      .fontWeight(600)
+                      .fontFeature('"ss01" on') // 等宽数字
+                    Column({ space: P.ExtraSmall }) {
+                      Column({ space: P.ExtraSmall }) {
+                        HighlightText({
+                          text: row.title,
+                          fontSize: 20,
+                          overflowPosition: TextOverflowPosition.end
+                        })
+                        HighlightText({
+                          text: row.content,
+                          fontSize: 12,
+                          overflowPosition: ColorfulHighlightText.regExp.test(row.content)
+                            ? TextOverflowPosition.auto // 有高亮文本才寻找高亮文本的位置进行显示，否则会崩溃
+                            : TextOverflowPosition.end
+                        })
+                      }
+                      .alignItems(HorizontalAlign.Start)
+
+                      Text(row.insertDateFormatted)
+                        .fontSize(10)
+                        .width('100%')
+                        .textAlign(TextAlign.End)
+                        .fontColor(Color.Grey)
+                    }
+                    .alignItems(HorizontalAlign.Start)
+                    .layoutWeight(1)
+                  }
+                  .padding({ left: P.Middle, right: P.Middle })
+                }
+                .onClick(() => {
+                  const dialogId = "MainTableRowDialog"
+                  this.getUIContext().getFocusController().clearFocus()
+                  DialogHelper.showCustomDialog(wrapBuilder(buildMainTableRowDialog), {
+                    item: row,
+                    dialogId: dialogId
+                  })
+                })
+              }, (item: IMainTableRowVO) => JSON.stringify(item))
+            }
+            .cachedCount(5)
+            .width('100%')
+            .height('100%')
+            .geometryTransition("list")
+            .transition(TransitionEffect.OPACITY)
+          }
+        }.layoutWeight(1)
       }
     }
     .title(NavigationTitle, { backgroundColor: Material3PrimaryColor })

@@ -37,8 +37,9 @@ export class DbManager {
       .then((resultSet) => {
         resultSet.goToFirstRow()
         hilog.debug(0xABCD, DbManager.name, JSON.stringify(Object.entries(resultSet.getRow())))
-      });
+      })
 
     this._dao = new MainTableDao(this.db)
+    await this.dao.initFts5()
   }
 }

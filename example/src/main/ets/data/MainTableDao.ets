@@ -17,7 +17,6 @@ export class MainTableDao {
 
   constructor(db: relationalStore.RdbStore) {
     this.db = db
-    this._initFts5()
   }
 
   /**
@@ -25,9 +24,9 @@ export class MainTableDao {
    *
    * 参考：https://sqlite.org/fts5.html
    */
-  private _initFts5() {
+  async initFts5() {
     // 主表
-    this.db.executeSync(`
+    await this.db.executeSql(`
       CREATE TABLE ${mainTable} (
         ${id} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${title} TEXT,
@@ -37,7 +36,7 @@ export class MainTableDao {
     `)
 
     /// FTS5虚表
-    this.db.executeSync(`
+    await this.db.executeSql(`
       CREATE VIRTUAL TABLE ${fts5Table} USING fts5(
         ${title}, ${content}, ${insertDate} UNINDEXED,
         tokenize = '${tokenizer}',
@@ -55,17 +54,17 @@ export class MainTableDao {
       INSERT INTO ${fts5Table}(${fts5Table}, rowid, ${title}, ${content})
         VALUES ('delete', old.${id}, old.${title}, old.${content});
     `;
-    this.db.executeSync(`
+    await this.db.executeSql(`
       CREATE TRIGGER ${mainTable}_insert AFTER INSERT ON ${mainTable} BEGIN
         ${newInsert}
       END;
     `);
-    this.db.executeSync(`
+    await this.db.executeSql(`
       CREATE TRIGGER ${mainTable}_delete AFTER DELETE ON ${mainTable} BEGIN
         ${deleteInsert}
       END;
     `);
-    this.db.executeSync(`
+    await this.db.executeSql(`
       CREATE TRIGGER ${mainTable}_update AFTER UPDATE ON ${mainTable} BEGIN
         ${deleteInsert}
         ${newInsert}
@@ -77,7 +76,7 @@ export class MainTableDao {
    * @param resultSet 查询结果
    * @returns 查询结果转换为的实体类
    */
-  private _toMainTableRows(resultSet: relationalStore.ResultSet): MainTableRow[] {
+  private toMainTableRows(resultSet: relationalStore.ResultSet): MainTableRow[] {
     return Array.from<void, MainTableRow>({ length: resultSet.rowCount }, (_, index) => {
       resultSet.goToRow(index)
       const row = resultSet.getRow()
@@ -93,7 +92,7 @@ export class MainTableDao {
   /**
    * @returns 随机中文词组数据
    */
-  private _buildData(): MainTableRow {
+  private buildRow(): MainTableRow {
     return new MainTableRow({
       id: 0,
       title: randomWords(2, 3),
@@ -106,31 +105,30 @@ export class MainTableDao {
    * 插入 `length` 条随机数据
    * @param length 需要多少条随机数据
    */
-  insertRandomData(length: number) {
+  async insertRandomData(length: number) {
     for (let i = 0; i < length; i++) {
-      const newRow = this._buildData()
-      this.db.executeSync(
+      const newRow = this.buildRow()
+      await this.db.executeSql(
         `INSERT INTO ${mainTable} VALUES(?, ?, ?, ?);`,
         [null, newRow.title, newRow.content, newRow.insertDateDB]
       )
     }
   }
 
-  private readonly _selectAllPredicates = new relationalStore.RdbPredicates(mainTable)
+  private readonly selectAllPredicates = new relationalStore.RdbPredicates(mainTable)
 
   /**
    * @returns 主表的所有数据
    */
-  selectAll(): MainTableRow[] {
-    const resultSet = this.db.querySync(this._selectAllPredicates)
-    return this._toMainTableRows(resultSet)
+  async selectAll(): Promise<MainTableRow[]> {
+    return this.toMainTableRows(await this.db.query(this.selectAllPredicates))
   }
 
   /**
    * @returns 主表的数据数量
    */
-  selectCount(): number {
-    const resultSet = this.db.querySqlSync(`SELECT COUNT(*) FROM ${mainTable}`)
+  async selectCount(): Promise<number> {
+    const resultSet = await this.db.querySql(`SELECT COUNT(*) FROM ${mainTable}`)
     resultSet.goToFirstRow()
     return resultSet.getLong(0)
   }
@@ -141,9 +139,9 @@ export class MainTableDao {
    * @param tokenizer 分词器，取值：jieba, simple
    * @returns 搜索结果
    */
-  search(value: string, tokenizer: string): MainTableRow[] {
+  async search(value: string, tokenizer: string): Promise<MainTableRow[]> {
     const wrapperSql = `'${ZeroWidth.start}', '${ZeroWidth.end}'`
-    const resultSet = this.db.querySqlSync(`
+    const resultSet = await this.db.querySql(`
       SELECT
         rowid AS ${id},
         simple_highlight(${fts5Table}, 0, ${wrapperSql}) AS ${title},
@@ -152,17 +150,17 @@ export class MainTableDao {
       FROM ${fts5Table}
       WHERE ${fts5Table} MATCH ${tokenizer}_query(?);
     `, [value])
-    return this._toMainTableRows(resultSet)
+    return this.toMainTableRows(resultSet)
   }
 
   /**
    * 修改所有数据，测试触发器
    */
-  updateAll() {
-    const mainTableRowList = this.selectAll()
+  async updateAll() {
+    const mainTableRowList = await this.selectAll()
     for (let i = 0; i < mainTableRowList.length; i++) {
-      const newRow = this._buildData()
-      this.db.executeSync(
+      const newRow = this.buildRow()
+      await this.db.execute(
         `UPDATE ${mainTable} SET ${title} = ?, ${content} = ?, ${insertDate} = ? WHERE ${id} = ?;`,
         [newRow.title, newRow.content, newRow.insertDateDB, mainTableRowList[i].id]
       )

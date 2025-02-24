@@ -18,6 +18,8 @@
 |-------------------------------------------|-------------------------------------------|
 | ![1.png](./sqlite3_simple/example/1.png) | ![2.png](./sqlite3_simple/example/2.png) |
 
+### 目录
+
 - [前置准备](#前置准备)
 - [快速开始](#快速开始)
   - [1. 添加本库](#1-添加本库)
@@ -87,9 +89,9 @@ this.db.querySql("SELECT jieba_query('Jieba分词初始化（提前加载避免�
  * @param tokenizer 分词器，取值：jieba, simple
  * @returns 搜索结果
  */
-search(value: string, tokenizer: string): MainTableRow[] {
+async search(value: string, tokenizer: string): Promise<MainTableRow[]> {
   const wrapperSql = `'${ZeroWidth.start}', '${ZeroWidth.end}'`
-  const resultSet = this.db.querySqlSync(`
+  const resultSet = await this.db.querySql(`
     SELECT
       rowid AS ${id},
       simple_highlight(${fts5Table}, 0, ${wrapperSql}) AS ${title},
@@ -98,7 +100,7 @@ search(value: string, tokenizer: string): MainTableRow[] {
     FROM ${fts5Table}
     WHERE ${fts5Table} MATCH ${tokenizer}_query(?);
   `, [value])
-  return this._toMainTableRows(resultSet)
+  return this.toMainTableRows(resultSet)
 }
 ```
 

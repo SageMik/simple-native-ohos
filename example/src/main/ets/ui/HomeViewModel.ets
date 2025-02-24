@@ -7,30 +7,32 @@ export enum Tokenizer {
   SIMPLE
 }
 
+type MainTableResultArray = IMainTableRowVO[] | undefined
+type OnResultsChangedListener = (results: MainTableResultArray) => void
+
 @ObservedV2
 export class HomeUiState {
   @Trace searchValue = ""
   @Trace tokenizer = Tokenizer.JIEBA
-
-  isSearchValueEmpty() {
-    return this.searchValue.trim().length === 0
-  }
 }
 
 @ObservedV2
 export class HomeViewModel {
   readonly uiState = new HomeUiState()
-  @Trace results: IMainTableRowVO[] | undefined
+  @Trace results: MainTableResultArray
 
-  private selectAll() {
-    this.results = this.toMainTableRowVO(dbManger.dao.selectAll())
+  private async selectAll() {
+    this.results = await this.toMainTableRowVO(
+      await dbManger.dao.selectAll()
+    )
   }
 
-  private toMainTableRowVO(rows: MainTableRow[]): IMainTableRowVO[] {
+  private async toMainTableRowVO(rows: MainTableRow[]): Promise<IMainTableRowVO[]> {
+    const count = await this.selectCount()
     return rows.map<IMainTableRowVO>((v) => {
       return {
         id: v.id,
-        idFormatted: `${v.id}`.padStart(`${this.selectCount()}`.length, '0'),
+        idFormatted: `${v.id}`.padStart(`${count}`.length, '0'),
         title: v.title,
         content: v.content,
         insertDate: v.insertDate,
@@ -43,28 +45,35 @@ export class HomeViewModel {
     return dbManger.dao.selectCount()
   }
 
-  insertRandomData() {
-    dbManger.dao.insertRandomData(30)
-    this.selectAll()
+  async insertRandomData(): Promise<void> {
+    await dbManger.dao.insertRandomData(30)
+    return this.selectAll()
   }
 
-  updateAll() {
-    dbManger.dao.updateAll()
-    this.search()
+  async updateAll() {
+    this.results = undefined
+    await dbManger.dao.updateAll()
+    return this.search()
   }
 
   @Monitor("uiState.searchValue", "uiState.tokenizer")
-  search() {
+  async search(): Promise<void> {
     const searchValue = this.uiState.searchValue.trim()
     if (searchValue.length === 0) {
-      this.selectAll()
-      return
+      return this.selectAll()
     }
-    this.results = this.toMainTableRowVO(
-      dbManger.dao.search(
+    this.results = await this.toMainTableRowVO(
+      await dbManger.dao.search(
         searchValue,
         Tokenizer[this.uiState.tokenizer].toLocaleLowerCase()
       )
     )
+  }
+
+  readonly onResultsChangedSet: Set<OnResultsChangedListener> = new Set()
+
+  @Monitor("results")
+  onResultsChanged() {
+    this.onResultsChangedSet.forEach((l) => l(this.results))
   }
 }

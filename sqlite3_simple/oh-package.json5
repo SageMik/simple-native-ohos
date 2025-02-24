@@ -9,7 +9,7 @@
   "keywords": ["sqlite3", "分词", "中文", "拼音", "fts5"],
   "repository": "https://github.com/SageMik/sqlite3_simple_ohos/tree/main/sqlite3_simple",
   "dependencies": {
-    "simple-native-ohos": "file:../simple_native_ohos",
-//    "simple-native-ohos": "^1.0.3" // 远程
+//    "simple-native-ohos": "file:../simple_native_ohos",
+    "simple-native-ohos": "^1.0.3" // 远程
   }
 }
